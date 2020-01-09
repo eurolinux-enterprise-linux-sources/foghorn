@@ -1,0 +1,121 @@
+REDHAT-RGMANAGER-MIB DEFINITIONS ::= BEGIN
+
+--
+-- MIB for rgmanager service
+--
+
+IMPORTS
+        redhat                                  FROM REDHAT-MIB
+        MODULE-IDENTITY, OBJECT-TYPE,
+        NOTIFICATION-TYPE                       FROM SNMPv2-SMI
+        MODULE-COMPLIANCE, OBJECT-GROUP,
+        NOTIFICATION-GROUP                      FROM SNMPv2-CONF;
+
+rgmanager MODULE-IDENTITY
+        LAST-UPDATED "201102030000Z"
+        ORGANIZATION "Red Hat, Inc (www.redhat.com)"
+        CONTACT-INFO "postal:   Red Hat, Inc
+                                1801 Varsity Drive
+                                Raleigh, North Carolina 27606
+                                USA
+
+                      email:    customerservice@redhat.com
+                     "
+        DESCRIPTION  "Red Hat rgmanager MIB"
+        REVISION     "201102030000Z"
+        DESCRIPTION  "MIB version 1"
+        ::= { redhat 11 }
+
+--
+-- top level structure
+--
+
+rgmanagerNotification OBJECT IDENTIFIER ::= { rgmanager 0 }
+rgmanagerObject       OBJECT IDENTIFIER ::= { rgmanager 1 }
+rgmanagerConformance  OBJECT IDENTIFIER ::= { rgmanager 2 }
+
+--
+-- OBJECTS
+--
+
+rgmanagerServiceName OBJECT-TYPE
+        SYNTAX OCTET STRING (SIZE(1..32))
+        MAX-ACCESS accessible-for-notify
+        STATUS current
+        DESCRIPTION "service name"
+        ::= { rgmanagerObject 1 }
+
+rgmanagerServiceState OBJECT-TYPE
+        SYNTAX OCTET STRING (SIZE(1..32))
+        MAX-ACCESS accessible-for-notify
+        STATUS current
+        DESCRIPTION "service state"
+        ::= { rgmanagerObject 2 }
+
+rgmanagerServiceFlags OBJECT-TYPE
+        SYNTAX OCTET STRING (SIZE(1..32))
+        MAX-ACCESS accessible-for-notify
+        STATUS current
+        DESCRIPTION "service flags"
+        ::= { rgmanagerObject 3 }
+
+rgmanagerServiceCurrentOwner OBJECT-TYPE
+        SYNTAX OCTET STRING (SIZE(1..32))
+        MAX-ACCESS accessible-for-notify
+        STATUS current
+        DESCRIPTION "current owner"
+        ::= { rgmanagerObject 4 }
+
+rgmanagerServicePreviousOwner OBJECT-TYPE
+        SYNTAX OCTET STRING (SIZE(1..32))
+        MAX-ACCESS accessible-for-notify
+        STATUS current
+        DESCRIPTION "previous owner"
+        ::= { rgmanagerObject 5 }
+
+--
+-- NOTIFICATIONS
+--
+
+rgmanagerServiceStateChange NOTIFICATION-TYPE
+        OBJECTS { rgmanagerServiceName,
+                  rgmanagerServiceState,
+                  rgmanagerServiceFlags,
+                  rgmanagerServiceCurrentOwner,
+                  rgmanagerServicePreviousOwner }
+        STATUS current
+        DESCRIPTION "service state change"
+        ::= { rgmanagerNotification 1 }
+
+--
+-- CONFORMANCE
+--
+
+rgmanagerCompliances OBJECT IDENTIFIER ::= { rgmanagerConformance 1 }
+rgmanagerGroups      OBJECT IDENTIFIER ::= { rgmanagerConformance 2 }
+
+rgmanagerCompliance MODULE-COMPLIANCE
+        STATUS current
+        DESCRIPTION "Red Hat rgmanager compliance information"
+        MODULE -- this module
+        MANDATORY-GROUPS { rgmanagerObjectGroup,
+                           rgmanagerNotificationGroup }
+        ::= { rgmanagerCompliances 1 }
+
+rgmanagerObjectGroup OBJECT-GROUP
+        OBJECTS { rgmanagerServiceName,
+                  rgmanagerServiceState,
+                  rgmanagerServiceFlags,
+                  rgmanagerServiceCurrentOwner,
+                  rgmanagerServicePreviousOwner }
+        STATUS current
+        DESCRIPTION "Red Hat rgmanager objects"
+        ::= { rgmanagerGroups 1 }
+
+rgmanagerNotificationGroup NOTIFICATION-GROUP
+        NOTIFICATIONS { rgmanagerServiceStateChange }
+        STATUS current
+        DESCRIPTION "Red Hat rgmanager notifications"
+        ::= { rgmanagerGroups 2 }
+
+END

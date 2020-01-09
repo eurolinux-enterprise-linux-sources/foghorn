@@ -1,0 +1,36 @@
+.TH foghorn 8 
+.SH NAME
+foghorn \- D-Bus to SNMP daemon
+.SH SYNOPSIS
+.PP
+.B foghorn [\-v|\-\-verbose] [\-d|\-\-debug]
+
+.SH DESCRIPTION
+
+The \fIfoghorn\fP daemon listens for specific signals on the D-Bus
+system message bus and translates those signals into SNMPv2 traps.
+The \fIfoghorn\fP daemon runs as an SNMP AgentX subagent, and
+therefore \fIsnmpd\fP must be configured as an AgentX master
+agent. See \fIsnmpd.conf(8)\fP for more information.
+
+Traps currently exist for cluster quorum and membership transitions
+(from corosync), fencing results (from fenced), and cluster service
+state changes (from rgmanager).
+
+.SH OPTIONS
+
+.TP
+.I "-d, --debug"
+Debugging mode.  This causes \fIfoghorn\fP to stay in the foreground (i.e.
+not fork) and log all output to \fIstderr\fP instead of \fIsyslog\fP.
+
+.TP
+.I "-v, --verbose"
+This increases the logging verbosity of \fIfoghorn\fP. All messages
+are logged via \fIsyslog\fP unless the \-\-debug option is specified.
+
+.SH AUTHOR
+The foghorn daemon was written by Ryan O'Hara <rohara@redhat.com>
+
+.SH SEE ALSO
+dbus-daemon(1), corosync(8), rgmanager(8), fenced(8), snmpd(8), snmpd.conf(5)

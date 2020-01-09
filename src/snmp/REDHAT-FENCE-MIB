@@ -1,0 +1,103 @@
+REDHAT-FENCE-MIB DEFINITIONS ::= BEGIN
+
+--
+-- MIB for Red Hat Cluster fence service
+--
+
+IMPORTS
+        redhat                                  FROM REDHAT-MIB
+        MODULE-IDENTITY, OBJECT-TYPE,
+        NOTIFICATION-TYPE, Integer32            FROM SNMPv2-SMI
+        MODULE-COMPLIANCE, OBJECT-GROUP,
+        NOTIFICATION-GROUP                      FROM SNMPv2-CONF;
+
+fence MODULE-IDENTITY
+        LAST-UPDATED "201102030000Z"
+        ORGANIZATION "Red Hat, Inc (www.redhat.com)"
+        CONTACT-INFO "postal:   Red Hat, Inc
+                                1801 Varsity Drive
+                                Raleigh, North Carolina 27606
+                                USA
+
+                      email:    customerservice@redhat.com
+                     "
+        DESCRIPTION  "Red Hat Fence MIB"
+        REVISION     "201102030000Z"
+        DESCRIPTION  "MIB version 1"
+        ::= { redhat 10 }
+
+--
+-- top level structure
+--
+
+fenceNotification OBJECT IDENTIFIER ::= { fence 0 }
+fenceObject       OBJECT IDENTIFIER ::= { fence 1 }
+fenceConformance  OBJECT IDENTIFIER ::= { fence 2 }
+
+--
+-- OBJECTS
+--
+
+fenceNodeName OBJECT-TYPE
+        SYNTAX OCTET STRING (SIZE(1..32))
+        MAX-ACCESS accessible-for-notify
+        STATUS current
+        DESCRIPTION "node name"
+        ::= { fenceObject 1 }
+
+fenceNodeID OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS accessible-for-notify
+        STATUS current
+        DESCRIPTION "node id"
+        ::= { fenceObject 2 }
+
+fenceResult OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS accessible-for-notify
+        STATUS current
+        DESCRIPTION "result"
+        ::= { fenceObject 3 }
+
+--
+-- NOTIFICATIONS
+--
+
+fenceNotifyFenceNode NOTIFICATION-TYPE
+        OBJECTS { fenceNodeName,
+                  fenceNodeID,
+                  fenceResult }
+        STATUS current
+        DESCRIPTION "fence node"
+        ::= { fenceNotification 1 }
+
+--
+-- CONFORMANCE
+--
+
+fenceCompliances OBJECT IDENTIFIER ::= { fenceConformance 1 }
+fenceGroups      OBJECT IDENTIFIER ::= { fenceConformance 2 }
+
+fenceCompliance MODULE-COMPLIANCE
+        STATUS current
+        DESCRIPTION "Red Hat fence compliance information"
+        MODULE -- this module
+        MANDATORY-GROUPS { fenceObjectGroup,
+                           fenceNotificationGroup }
+        ::= { fenceCompliances 1 }
+
+fenceObjectGroup OBJECT-GROUP
+        OBJECTS { fenceNodeName,
+                  fenceNodeID,
+                  fenceResult }
+        STATUS current
+        DESCRIPTION "Red Hat fence objects"
+        ::= { fenceGroups 1 }
+
+fenceNotificationGroup NOTIFICATION-GROUP
+        NOTIFICATIONS { fenceNotifyFenceNode }
+        STATUS current
+        DESCRIPTION "Red Hat fence notifications"
+        ::= { fenceGroups 2 }
+
+END

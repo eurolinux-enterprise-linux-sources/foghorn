@@ -1,0 +1,92 @@
+REDHAT-FOGHORN-MIB DEFINITIONS ::= BEGIN
+
+--
+-- MIB for Red Hat Cluster foghorn service
+--
+
+IMPORTS
+        redhat                                  FROM REDHAT-MIB
+        MODULE-IDENTITY, OBJECT-TYPE,
+        NOTIFICATION-TYPE                       FROM SNMPv2-SMI
+        MODULE-COMPLIANCE, OBJECT-GROUP,
+        NOTIFICATION-GROUP                      FROM SNMPv2-CONF;
+
+foghorn MODULE-IDENTITY
+        LAST-UPDATED "201102030000Z"
+        ORGANIZATION "Red Hat, Inc (www.redhat.com)"
+        CONTACT-INFO "postal:   Red Hat, Inc
+                                1801 Varsity Drive
+                                Raleigh, North Carolina 27606
+                                USA
+
+                      email:    customerservice@redhat.com
+                     "
+        DESCRIPTION  "Red Hat foghorn MIB"
+        REVISION     "201102030000Z"
+        DESCRIPTION  "MIB version 1"
+        ::= { redhat 9 }
+
+--
+-- top level structure
+--
+
+foghornNotification OBJECT IDENTIFIER ::= { foghorn 0 }
+foghornObject       OBJECT IDENTIFIER ::= { foghorn 1 }
+foghornConformance  OBJECT IDENTIFIER ::= { foghorn 2 }
+
+--
+-- OBJECTS
+--
+
+foghornHostName OBJECT-TYPE
+        SYNTAX OCTET STRING (SIZE(1..32))
+        MAX-ACCESS accessible-for-notify
+        STATUS current
+        DESCRIPTION "node name"
+        ::= { foghornObject 1 }
+
+--
+-- NOTIFICATIONS
+--
+
+foghornDBusConnect NOTIFICATION-TYPE
+        OBJECTS { foghornHostName }
+        STATUS current
+        DESCRIPTION "DBus connect"
+        ::= { foghornNotification 1 }
+
+foghornDBusDisconnect NOTIFICATION-TYPE
+        OBJECTS { foghornHostName }
+        STATUS current
+        DESCRIPTION "DBus disconnect"
+        ::= { foghornNotification 2 }
+
+--
+-- CONFORMANCE
+--
+
+foghornCompliances OBJECT IDENTIFIER ::= { foghornConformance 1 }
+foghornGroups      OBJECT IDENTIFIER ::= { foghornConformance 2 }
+
+foghornCompliance MODULE-COMPLIANCE
+        STATUS current
+        DESCRIPTION "Red Hat foghorn compliance information"
+        MODULE -- this module
+        MANDATORY-GROUPS { foghornObjectGroup,
+                           foghornNotificationGroup }
+        ::= { foghornCompliances 1 }
+
+foghornObjectGroup OBJECT-GROUP
+        OBJECTS { foghornHostName }
+        STATUS current
+        DESCRIPTION "Red Hat foghorn objects"
+        ::= { foghornGroups 1 }
+
+foghornNotificationGroup NOTIFICATION-GROUP
+        NOTIFICATIONS { foghornDBusConnect,
+                        foghornDBusDisconnect }
+        STATUS current
+        DESCRIPTION "Red Hat foghorn notifications"
+        ::= { foghornGroups 2 }
+
+END
